@@ -26,13 +26,25 @@ export default function ProfilePage() {
 
   const loadUserData = async () => {
     try {
-      const [profileResponse, currentUserResponse] = await Promise.all([
-        usersAPI.getProfile(username),
-        usersAPI.getProfile() // Current user
-      ])
-      
-      setUser(profileResponse.data)
+      // Get current user first
+      const currentUserResponse = await usersAPI.getProfile()
       setCurrentUser(currentUserResponse.data)
+      
+      // If viewing own profile, use current user data
+      if (username === currentUserResponse.data.username) {
+        setUser(currentUserResponse.data)
+        return
+      }
+      
+      // Otherwise, try to get user by username (this might need backend support)
+      // For now, we'll handle the case where we can't find the user
+      try {
+        const profileResponse = await usersAPI.getProfile(username)
+        setUser(profileResponse.data)
+      } catch (profileError) {
+        // User not found
+        setUser(null)
+      }
       
       // Check if current user is following this profile
       // This would be determined by the API response in real implementation

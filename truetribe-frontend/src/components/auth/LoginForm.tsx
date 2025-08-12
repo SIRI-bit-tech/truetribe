@@ -53,7 +53,16 @@ export default function LoginForm() {
     try {
       const response = await authAPI.login(formData.email, formData.password)
       
-      if (response.data.access) {
+      // Handle successful login with tokens
+      if (response.status === 200 && response.data.tokens) {
+        localStorage.setItem('access_token', response.data.tokens.access)
+        localStorage.setItem('refresh_token', response.data.tokens.refresh)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        
+        // Redirect to feed (main homepage)
+        router.push('/feed')
+      } else if (response.data.access) {
+        // Fallback for different response format
         localStorage.setItem('access_token', response.data.access)
         localStorage.setItem('refresh_token', response.data.refresh)
         router.push('/feed')

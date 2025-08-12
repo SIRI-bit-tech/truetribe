@@ -95,7 +95,7 @@ export default function FeedPage() {
                 onClick={() => setShowCreatePost(true)}
                 className="flex-1 text-left px-4 py-3 bg-white/10 rounded-full text-white/70 hover:bg-white/20 transition-colors"
               >
-                What's on your mind, {currentUser.full_name.split(' ')[0]}?
+                What's on your mind, {currentUser.first_name || currentUser.username}?
               </button>
               <Button
                 onClick={() => setShowCreatePost(true)}

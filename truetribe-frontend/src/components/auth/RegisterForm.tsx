@@ -110,7 +110,16 @@ export default function RegisterForm() {
         full_name: formData.fullName
       })
       
-      if (response.data.success) {
+      // Store tokens and redirect on successful registration
+      if (response.status === 201 && response.data.tokens) {
+        localStorage.setItem('access_token', response.data.tokens.access)
+        localStorage.setItem('refresh_token', response.data.tokens.refresh)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        
+        // Redirect to feed (main homepage)
+        router.push('/feed')
+      } else {
+        // Fallback to email verification if no tokens
         router.push('/auth/verify-email?email=' + encodeURIComponent(formData.email))
       }
     } catch (error: any) {

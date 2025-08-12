@@ -142,7 +142,7 @@ export default function ProfileHeader({ user, isOwnProfile, isFollowing = false,
           )}
 
           {/* Expertise Areas */}
-          {user.expertise_areas.length > 0 && (
+          {user.expertise_areas && user.expertise_areas.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {user.expertise_areas.map((area, index) => (
                 <span
@@ -174,7 +174,7 @@ export default function ProfileHeader({ user, isOwnProfile, isFollowing = false,
           </div>
           <div className="text-center">
             <div className="text-lg font-semibold text-primary-purple">
-              {user.expertise_areas.length}
+              {user.expertise_areas?.length || 0}
             </div>
             <div className="text-white/60 text-sm">Expertise Areas</div>
           </div>
