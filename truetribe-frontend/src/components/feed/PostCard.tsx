@@ -16,11 +16,17 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, onUpdate }: PostCardProps) {
-  const [isLiked, setIsLiked] = useState(post.is_liked)
-  const [likesCount, setLikesCount] = useState(post.likes_count)
-  const [isBookmarked, setIsBookmarked] = useState(post.is_bookmarked)
+  const [isLiked, setIsLiked] = useState(post?.is_liked || false)
+  const [likesCount, setLikesCount] = useState(post?.likes_count || 0)
+  const [isBookmarked, setIsBookmarked] = useState(post?.is_bookmarked || false)
   const [showComments, setShowComments] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  // Add null check for post.user
+  if (!post || !post.user) {
+    console.warn('Post or post.user is undefined:', post)
+    return null
+  }
 
   const handleLike = async () => {
     if (loading) return
@@ -61,8 +67,8 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${post.user.full_name} on TrueTribe`,
-          text: post.content,
+          title: `${post.user?.full_name || 'User'} on TrueTribe`,
+          text: post.content || '',
           url: `${window.location.origin}/post/${post.id}`
         })
       } catch (error) {
@@ -108,8 +114,8 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
             <div className="flex items-center space-x-2 mt-1">
               <span className="text-white/60 text-sm">@{post.user.username}</span>
               <span className="text-white/40">•</span>
-              <span className="text-white/60 text-sm">{formatTimeAgo(post.created_at)}</span>
-              {post.location && (
+              <span className="text-white/60 text-sm">{post.created_at ? formatTimeAgo(post.created_at) : 'Just now'}</span>
+              {post.location && post.location.trim() && (
                 <>
                   <span className="text-white/40">•</span>
                   <span className="text-white/60 text-sm">📍 {post.location}</span>
@@ -120,8 +126,8 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
         </div>
 
         <div className="flex items-center space-x-2">
-          <TrustBadge score={post.trust_score} size="sm" />
-          {post.fact_checked && (
+          <TrustBadge score={post.trust_score || 0} size="sm" />
+          {post.fact_checked === true && (
             <div className="w-6 h-6 bg-trust-green rounded-full flex items-center justify-center" title="Fact Checked">
               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -134,11 +140,11 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
       {/* Content */}
       <div className="mb-4">
         <p className="text-white leading-relaxed whitespace-pre-wrap">
-          {post.content}
+          {post.content || 'No content available'}
         </p>
         
         {/* Hashtags */}
-        {post.hashtags.length > 0 && (
+        {post.hashtags && post.hashtags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-3">
             {post.hashtags.map((hashtag, index) => (
               <Link
@@ -154,7 +160,7 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
       </div>
 
       {/* Images */}
-      {post.images.length > 0 && (
+      {post.images && post.images.length > 0 && (
         <div className={`mb-4 grid gap-2 ${
           post.images.length === 1 ? 'grid-cols-1' :
           post.images.length === 2 ? 'grid-cols-2' :
@@ -211,7 +217,7 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            <span className="text-sm font-medium">{formatNumber(post.comments_count)}</span>
+            <span className="text-sm font-medium">{formatNumber(post.comments_count || 0)}</span>
           </button>
 
           {/* Share */}
@@ -222,7 +228,7 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
             </svg>
-            <span className="text-sm font-medium">{formatNumber(post.shares_count)}</span>
+            <span className="text-sm font-medium">{formatNumber(post.shares_count || 0)}</span>
           </button>
         </div>
 

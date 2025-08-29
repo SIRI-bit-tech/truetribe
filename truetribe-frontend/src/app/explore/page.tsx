@@ -128,58 +128,66 @@ export default function ExplorePage() {
             {/* Posts Grid */}
             {activeTab === 'posts' && (
               <div className="grid grid-cols-3 gap-1 md:gap-2">
-                {posts.map((post, index) => (
-                  <motion.div
-                    key={post.id}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="aspect-square relative group cursor-pointer overflow-hidden rounded-lg"
-                  >
-                    {post.images.length > 0 ? (
-                      <Image
-                        src={post.images[0]}
-                        alt="Post"
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary-blue to-primary-purple flex items-center justify-center">
-                        <span className="text-white text-2xl">📝</span>
+                {posts && posts.length > 0 ? (
+                  posts.map((post, index) => (
+                    <motion.div
+                      key={post.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="aspect-square relative group cursor-pointer overflow-hidden rounded-lg"
+                    >
+                      {post.images && post.images.length > 0 ? (
+                        <Image
+                          src={post.images[0]}
+                          alt="Post"
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-primary-blue to-primary-purple flex items-center justify-center">
+                          <span className="text-white text-2xl">📝</span>
+                        </div>
+                      )}
+                      
+                      {/* Trust Badge */}
+                      <div className="absolute top-2 left-2">
+                        <TrustBadge score={post.trust_score || 0} size="sm" />
                       </div>
-                    )}
-                    
-                    {/* Trust Badge */}
-                    <div className="absolute top-2 left-2">
-                      <TrustBadge score={post.trust_score} size="sm" />
-                    </div>
 
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-4 text-white">
-                        <div className="flex items-center space-x-1">
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-sm font-medium">{formatNumber(post.likes_count)}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-sm font-medium">{formatNumber(post.comments_count)}</span>
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-4 text-white">
+                          <div className="flex items-center space-x-1">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-sm font-medium">{formatNumber(post.likes_count || 0)}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-sm font-medium">{formatNumber(post.comments_count || 0)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="col-span-3 text-center py-12">
+                    <div className="text-4xl mb-4">📝</div>
+                    <p className="text-white/60">No posts found</p>
+                  </div>
+                )}
               </div>
             )}
 
             {/* People Grid */}
             {activeTab === 'people' && (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {users.map((user, index) => (
+                {users && users.length > 0 ? (
+                  users.map((user, index) => (
                   <motion.div
                     key={user.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -213,16 +221,16 @@ export default function ExplorePage() {
                         </div>
 
                         <div className="mb-4">
-                          <TrustBadge score={user.trust_score} size="sm" showLevel />
+                          <TrustBadge score={user.trust_score || 0} size="sm" showLevel />
                         </div>
 
                         <div className="flex justify-center space-x-4 text-white/60 text-sm mb-4">
                           <div className="text-center">
-                            <div className="font-semibold text-white">{formatNumber(user.posts_count)}</div>
+                            <div className="font-semibold text-white">{formatNumber(user.posts_count || 0)}</div>
                             <div>Posts</div>
                           </div>
                           <div className="text-center">
-                            <div className="font-semibold text-white">{formatNumber(user.followers_count)}</div>
+                            <div className="font-semibold text-white">{formatNumber(user.followers_count || 0)}</div>
                             <div>Followers</div>
                           </div>
                         </div>
@@ -233,7 +241,13 @@ export default function ExplorePage() {
                       </div>
                     </Link>
                   </motion.div>
-                ))}
+                ))
+              ) : (
+                <div className="col-span-4 text-center py-12">
+                  <div className="text-4xl mb-4">👥</div>
+                  <p className="text-white/60">No users found</p>
+                </div>
+              )}
               </div>
             )}
 
@@ -267,7 +281,7 @@ export default function ExplorePage() {
         )}
 
         {/* Empty State */}
-        {!loading && ((activeTab === 'posts' && posts.length === 0) || (activeTab === 'people' && users.length === 0)) && (
+        {!loading && ((activeTab === 'posts' && (!posts || posts.length === 0)) || (activeTab === 'people' && (!users || users.length === 0))) && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">
               {activeTab === 'posts' ? '📝' : '👥'}

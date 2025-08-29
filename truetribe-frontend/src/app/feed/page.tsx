@@ -30,7 +30,12 @@ export default function FeedPage() {
         usersAPI.getProfile()
       ])
       
-      setPosts(feedResponse.data.results || [])
+      // Filter out posts without valid user data
+      const validPosts = (feedResponse.data.results || []).filter(post => 
+        post && post.user && post.user.username
+      )
+      
+      setPosts(validPosts)
       setCurrentUser(userResponse.data)
       setHasMore(!!feedResponse.data.next)
     } catch (error) {
@@ -48,7 +53,12 @@ export default function FeedPage() {
       const response = await postsAPI.getFeed(page + 1)
       const newPosts = response.data.results || []
       
-      setPosts(prev => [...prev, ...newPosts])
+      // Filter out posts without valid user data
+      const validNewPosts = newPosts.filter(post => 
+        post && post.user && post.user.username
+      )
+      
+      setPosts(prev => [...prev, ...validNewPosts])
       setPage(prev => prev + 1)
       setHasMore(!!response.data.next)
     } catch (error) {
@@ -95,7 +105,7 @@ export default function FeedPage() {
                 onClick={() => setShowCreatePost(true)}
                 className="flex-1 text-left px-4 py-3 bg-white/10 rounded-full text-white/70 hover:bg-white/20 transition-colors"
               >
-                What's on your mind, {currentUser.first_name || currentUser.username}?
+                What&apos;s on your mind, {currentUser.first_name || currentUser.username}?
               </button>
               <Button
                 onClick={() => setShowCreatePost(true)}

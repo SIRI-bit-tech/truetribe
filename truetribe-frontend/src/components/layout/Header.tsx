@@ -6,21 +6,31 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import TrustBadge from '@/components/ui/TrustBadge'
+import ProfilePictureUpload from '@/components/profile/ProfilePictureUpload'
 import { User } from '@/types'
+import { usersAPI } from '@/lib/api'
 
 interface HeaderProps {
   user?: User | null
+  onUserUpdate?: (updatedUser: User) => void
 }
 
-export default function Header({ user }: HeaderProps) {
+export default function Header({ user, onUserUpdate }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showProfileUpload, setShowProfileUpload] = useState(false)
   const router = useRouter()
 
   const handleLogout = () => {
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     router.push('/auth/login')
+  }
+
+  const handleAvatarUpdate = (newAvatarUrl: string) => {
+    const updatedUser = { ...user!, avatar: newAvatarUrl }
+    onUserUpdate?.(updatedUser)
+    setShowProfileUpload(false)
   }
 
   return (
@@ -104,6 +114,12 @@ export default function Header({ user }: HeaderProps) {
                       >
                         Profile
                       </Link>
+                      <button
+                        onClick={() => setShowProfileUpload(true)}
+                        className="block w-full text-left px-4 py-2 text-white hover:bg-white/10 transition-colors"
+                      >
+                        Update Photo
+                      </button>
                       <Link
                         href="/settings"
                         className="block px-4 py-2 text-white hover:bg-white/10 transition-colors"
@@ -144,6 +160,33 @@ export default function Header({ user }: HeaderProps) {
           </div>
         </div>
       </div>
+
+      {/* Profile Picture Upload Modal */}
+      {showProfileUpload && user && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="glass rounded-2xl p-6 w-full max-w-md">
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-bold text-white mb-2">Update Profile Picture</h3>
+              <p className="text-white/70">Upload a new profile picture</p>
+            </div>
+            
+            <ProfilePictureUpload
+              currentAvatar={user.avatar}
+              username={user.username}
+              onAvatarUpdate={handleAvatarUpdate}
+            />
+            
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setShowProfileUpload(false)}
+                className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

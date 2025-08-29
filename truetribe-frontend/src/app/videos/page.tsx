@@ -34,8 +34,15 @@ export default function VideosPage() {
       const response = await videosAPI.getVideoFeed(1)
       setVideos(response.data.results || [])
       setHasMore(!!response.data.next)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading videos:', error)
+      // Handle 404 error gracefully - API endpoint might not exist yet
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 404) {
+        console.warn('Videos API endpoint not found. Using mock data for development.')
+        // Set empty videos array and disable pagination
+        setVideos([])
+        setHasMore(false)
+      }
     } finally {
       setLoading(false)
     }
@@ -52,8 +59,13 @@ export default function VideosPage() {
       setVideos(prev => [...prev, ...newVideos])
       setPage(prev => prev + 1)
       setHasMore(!!response.data.next)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading more videos:', error)
+      // Handle 404 error gracefully
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response && error.response.status === 404) {
+        console.warn('Videos API endpoint not found. Disabling pagination.')
+        setHasMore(false)
+      }
     } finally {
       setLoadingMore(false)
     }
@@ -119,21 +131,34 @@ export default function VideosPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     )
   }
 
+  // Show empty state when no videos
   if (videos.length === 0) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🎥</div>
-          <h2 className="text-2xl font-bold text-white mb-4">No Videos Yet</h2>
-          <p className="text-white/70 max-w-md">
-            Videos from verified creators will appear here. Check back soon for amazing content!
-          </p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="glass rounded-2xl p-12 max-w-md mx-auto"
+          >
+            <div className="text-6xl mb-6">🎥</div>
+            <h1 className="text-3xl font-bold text-white mb-4">Videos Coming Soon!</h1>
+                         <p className="text-white/70 mb-6">
+               The video sharing feature is currently under development. Soon you&apos;ll be able to upload, watch, and share videos with the TrueTribe community.
+             </p>
+            <div className="bg-primary-blue/20 border border-primary-blue/50 rounded-xl p-4">
+                             <p className="text-primary-blue text-sm">
+                 <strong>What&apos;s coming:</strong> Video uploads, short-form content, live streaming, and more!
+               </p>
+            </div>
+          </motion.div>
         </div>
       </div>
     )

@@ -102,6 +102,7 @@ export default function ProfilePage() {
             isOwnProfile={isOwnProfile}
             isFollowing={isFollowing}
             onFollowChange={handleFollowChange}
+            onUserUpdate={(updatedUser) => setUser(updatedUser)}
           />
 
           {/* Profile Tabs */}
