@@ -92,7 +92,7 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
         <div className="flex items-center space-x-3">
           <Link href={`/profile/${post.user.username}`}>
             <Image
-              src={post.user.avatar || '/default-avatar.png'}
+              src={post.user.avatar || '/default-avatar.svg'}
               alt={post.user.username}
               width={48}
               height={48}

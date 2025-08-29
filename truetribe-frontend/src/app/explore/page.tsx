@@ -199,7 +199,7 @@ export default function ExplorePage() {
                         <div className="relative mb-4">
                           <div className="w-20 h-20 rounded-full overflow-hidden mx-auto border-4 border-white/20">
                             <Image
-                              src={user.avatar || '/default-avatar.png'}
+                              src={user.avatar || '/default-avatar.svg'}
                               alt={user.username}
                               width={80}
                               height={80}

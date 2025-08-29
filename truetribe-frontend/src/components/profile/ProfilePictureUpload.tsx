@@ -16,11 +16,20 @@ export default function ProfilePictureUpload({ currentAvatar, username, onAvatar
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle')
+  const [uploadMessage, setUploadMessage] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file && file.type.startsWith('image/')) {
+      // Check file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024 // 10MB
+      if (file.size > maxSize) {
+        alert('File size must be less than 10MB. Please choose a smaller image.')
+        return
+      }
+      
       setSelectedFile(file)
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -35,21 +44,76 @@ export default function ProfilePictureUpload({ currentAvatar, username, onAvatar
     if (!selectedFile) return
 
     setIsUploading(true)
+    setUploadStatus('uploading')
+    setUploadMessage('')
+    
+    // Add timeout to prevent infinite loading
+    const uploadTimeout = setTimeout(() => {
+      setIsUploading(false)
+      setUploadStatus('error')
+      setUploadMessage('Upload timed out. Please try again.')
+    }, 30000) // 30 second timeout
+
     try {
       const formData = new FormData()
-      formData.append('avatar', selectedFile)
+      formData.append('profile_picture', selectedFile)
+      
+      console.log('Uploading file:', selectedFile.name, 'Size:', selectedFile.size, 'Type:', selectedFile.type)
+      console.log('FormData entries:', Array.from(formData.entries()))
 
       const response = await usersAPI.updateProfile(formData)
+      console.log('Upload response:', response)
       
-      if (response.data.avatar) {
-        onAvatarUpdate(response.data.avatar)
-        setShowUploadModal(false)
-        setSelectedFile(null)
-        setPreviewUrl('')
+      clearTimeout(uploadTimeout)
+      
+      // Check if the response has the expected structure
+      if (response && response.data && response.data.avatar) {
+        setUploadStatus('success')
+        setTimeout(() => {
+          onAvatarUpdate(response.data.avatar)
+          setShowUploadModal(false)
+          setSelectedFile(null)
+          setPreviewUrl('')
+          setUploadStatus('idle')
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+          }
+        }, 1500)
+      } else {
+        // If no avatar in response, show error
+        setUploadStatus('error')
+        setUploadMessage('Upload completed but no avatar URL received. Please refresh the page.')
       }
+      
     } catch (error) {
+      clearTimeout(uploadTimeout)
       console.error('Error uploading profile picture:', error)
-      alert('Failed to upload profile picture. Please try again.')
+      
+      // More specific error handling
+      let errorMessage = 'Failed to upload profile picture. Please try again.'
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const response = error.response as { status?: number; data?: { profile_picture?: string[] } }
+        if (response?.status === 413) {
+          errorMessage = 'File too large. Please choose a smaller image.'
+        } else if (response?.status === 415) {
+          errorMessage = 'Unsupported file type. Please use JPG, PNG, or GIF.'
+        } else if (response?.status === 400) {
+          // Check for specific validation errors from backend
+          if (response.data && response.data.profile_picture) {
+            errorMessage = response.data.profile_picture[0] || 'Invalid profile picture. Please check file size and format.'
+          } else {
+            errorMessage = 'Invalid request. Please check your file and try again.'
+          }
+        } else if (response?.status === 401) {
+          errorMessage = 'Please log in again to upload your profile picture.'
+        } else if (response?.status && response.status >= 500) {
+          errorMessage = 'Server error. Please try again later.'
+        }
+      }
+      
+      setUploadStatus('error')
+      setUploadMessage(errorMessage)
     } finally {
       setIsUploading(false)
     }
@@ -59,6 +123,8 @@ export default function ProfilePictureUpload({ currentAvatar, username, onAvatar
     setShowUploadModal(false)
     setSelectedFile(null)
     setPreviewUrl('')
+    setUploadStatus('idle')
+    setUploadMessage('')
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -70,7 +136,7 @@ export default function ProfilePictureUpload({ currentAvatar, username, onAvatar
       <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
         <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white/20">
           <Image
-            src={currentAvatar || '/default-avatar.png'}
+            src={currentAvatar || '/default-avatar.svg'}
             alt={username}
             width={160}
             height={160}
@@ -143,10 +209,10 @@ export default function ProfilePictureUpload({ currentAvatar, username, onAvatar
                 </button>
                 <button
                   onClick={handleUpload}
-                  disabled={isUploading}
+                  disabled={isUploading || uploadStatus === 'uploading'}
                   className="flex-1 px-4 py-2 bg-primary-blue text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isUploading ? (
+                  {isUploading || uploadStatus === 'uploading' ? (
                     <div className="flex items-center justify-center space-x-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       <span>Uploading...</span>
@@ -156,6 +222,19 @@ export default function ProfilePictureUpload({ currentAvatar, username, onAvatar
                   )}
                 </button>
               </div>
+
+              {/* Upload Status */}
+              {uploadStatus === 'success' && (
+                <div className="mt-4 p-3 bg-trust-green/20 border border-trust-green/50 rounded-lg">
+                  <p className="text-trust-green text-sm text-center">Profile picture updated successfully!</p>
+                </div>
+              )}
+              
+              {uploadStatus === 'error' && (
+                <div className="mt-4 p-3 bg-trust-red/20 border border-trust-red/50 rounded-lg">
+                  <p className="text-trust-red text-sm text-center">{uploadMessage}</p>
+                </div>
+              )}
 
               {/* Upload Tips */}
               <div className="mt-4 text-center">

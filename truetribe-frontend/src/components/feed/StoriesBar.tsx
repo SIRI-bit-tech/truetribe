@@ -66,7 +66,7 @@ export default function StoriesBar({ currentUser }: StoriesBarProps) {
             >
               <div className="relative">
                 <Image
-                  src={currentUser.avatar || '/default-avatar.png'}
+                  src={currentUser.avatar || '/default-avatar.svg'}
                   alt="Your story"
                   width={64}
                   height={64}
@@ -103,7 +103,7 @@ export default function StoriesBar({ currentUser }: StoriesBarProps) {
                     : 'bg-white/20'
                 }`}>
                   <Image
-                    src={group.user.avatar || '/default-avatar.png'}
+                    src={group.user.avatar || '/default-avatar.svg'}
                     alt={group.user.username}
                     width={64}
                     height={64}
@@ -208,7 +208,7 @@ function StoryViewer({ story, onClose, onNext, onPrevious }: StoryViewerProps) {
       <div className="absolute top-8 left-4 right-4 z-10 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <Image
-            src={story.user.avatar || '/default-avatar.png'}
+            src={story.user.avatar || '/default-avatar.svg'}
             alt={story.user.username}
             width={32}
             height={32}

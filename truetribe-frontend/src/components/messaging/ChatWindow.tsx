@@ -121,7 +121,7 @@ export default function ChatWindow({ conversation, currentUser, onBack }: ChatWi
             
             <div className="relative">
               <Image
-                src={otherUser.avatar || '/default-avatar.png'}
+                src={otherUser.avatar || '/default-avatar.svg'}
                 alt={otherUser.username}
                 width={40}
                 height={40}
@@ -184,7 +184,7 @@ export default function ChatWindow({ conversation, currentUser, onBack }: ChatWi
                     {/* Avatar */}
                     {showAvatar && !isOwn && (
                       <Image
-                        src={message.sender.avatar || '/default-avatar.png'}
+                        src={message.sender.avatar || '/default-avatar.svg'}
                         alt={message.sender.username}
                         width={32}
                         height={32}
@@ -266,7 +266,7 @@ export default function ChatWindow({ conversation, currentUser, onBack }: ChatWi
             className="flex items-center space-x-2"
           >
             <Image
-              src={otherUser.avatar || '/default-avatar.png'}
+              src={otherUser.avatar || '/default-avatar.svg'}
               alt={otherUser.username}
               width={24}
               height={24}

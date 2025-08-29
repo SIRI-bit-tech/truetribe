@@ -127,7 +127,7 @@ export default function VideoCard({ video, isActive, onUpdate }: VideoCardProps)
             <div className="flex items-center space-x-3 mb-4">
               <Link href={`/profile/${video.user.username}`}>
                 <Image
-                  src={video.user.avatar || '/default-avatar.png'}
+                  src={video.user.avatar || '/default-avatar.svg'}
                   alt={video.user.username}
                   width={48}
                   height={48}

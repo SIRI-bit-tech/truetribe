@@ -65,7 +65,7 @@ export default function ProfileHeader({ user, isOwnProfile, isFollowing = false,
           ) : (
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white/20">
               <Image
-                src={user.avatar || '/default-avatar.png'}
+                src={user.avatar || '/default-avatar.svg'}
                 alt={user.username}
                 width={160}
                 height={160}

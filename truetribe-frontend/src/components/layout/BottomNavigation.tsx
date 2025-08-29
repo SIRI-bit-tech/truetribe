@@ -91,7 +91,7 @@ export default function BottomNavigation({ user }: BottomNavigationProps) {
               pathname.includes('/profile') ? 'border-white' : 'border-white/60'
             )}>
               <Image
-                src={user.avatar || '/default-avatar.png'}
+                src={user.avatar || '/default-avatar.svg'}
                 alt={user.username}
                 width={24}
                 height={24}

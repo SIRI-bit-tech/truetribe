@@ -59,7 +59,9 @@ export const usersAPI = {
     api.get(`/api/v1/users/${userId ? `${userId}/` : 'me/'}`),
   
   updateProfile: (data: any) =>
-    api.patch('/api/v1/users/me/', data),
+    api.patch('/api/v1/users/me/', data, {
+      headers: data instanceof FormData ? { 'Content-Type': undefined } : {}
+    }),
   
   follow: (userId: string) =>
     api.post(`/api/v1/users/${userId}/follow/`),
@@ -198,7 +200,7 @@ export const trustAPI = {
   reportScam: (data: any) =>
     api.post('/api/v1/trust/report-scam/', data),
   
-  factCheck: (postId: string, data: any) =>
+  factCheck: (postId: string, data: unknown) =>
     api.post(`/api/v1/trust/fact-check/${postId}/`, data),
 }
 

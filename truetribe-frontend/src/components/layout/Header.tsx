@@ -98,7 +98,7 @@ export default function Header({ user, onUserUpdate }: HeaderProps) {
                     className="flex items-center space-x-2 p-1 rounded-full hover:bg-white/10 transition-colors"
                   >
                     <Image
-                      src={user.avatar || '/default-avatar.png'}
+                      src={user.avatar || '/default-avatar.svg'}
                       alt={user.username}
                       width={32}
                       height={32}

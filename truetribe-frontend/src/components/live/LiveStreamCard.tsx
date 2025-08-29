@@ -87,7 +87,7 @@ export default function LiveStreamCard({ stream, onJoin }: LiveStreamCardProps) 
         <div className="flex items-center space-x-3 mb-3">
           <Link href={`/profile/${stream.user.username}`}>
             <Image
-              src={stream.user.avatar || '/default-avatar.png'}
+              src={stream.user.avatar || '/default-avatar.svg'}
               alt={stream.user.username}
               width={40}
               height={40}

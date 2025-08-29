@@ -96,7 +96,7 @@ export default function SettingsPage() {
       <div className="flex items-center space-x-6 mb-8">
         <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/20">
           <img
-            src={user.avatar || '/default-avatar.png'}
+            src={user.avatar || '/default-avatar.svg'}
             alt={user.username}
             className="w-full h-full object-cover"
           />

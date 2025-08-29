@@ -21,7 +21,7 @@ export default function Avatar({
   className = ''
 }: AvatarProps) {
   // Determine image source and alt text
-  const imageSrc = src || user?.avatar || '/default-avatar.png'
+  const imageSrc = src || user?.avatar || '/default-avatar.svg'
   const imageAlt = alt || user?.username || 'User'
   
   // Size classes

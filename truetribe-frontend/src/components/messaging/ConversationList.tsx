@@ -107,7 +107,7 @@ export default function ConversationList({
                     {/* Avatar */}
                     <div className="relative">
                       <Image
-                        src={otherUser.avatar || '/default-avatar.png'}
+                        src={otherUser.avatar || '/default-avatar.svg'}
                         alt={otherUser.username}
                         width={48}
                         height={48}

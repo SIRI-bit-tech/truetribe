@@ -97,7 +97,7 @@ export default function FeedPage() {
           >
             <div className="flex items-center space-x-3">
               <img
-                src={currentUser.avatar || '/default-avatar.png'}
+                src={currentUser.avatar || '/default-avatar.svg'}
                 alt={currentUser.username}
                 className="w-10 h-10 rounded-full"
               />
@@ -261,7 +261,7 @@ function CreatePostModal({ user, onClose, onPostCreated }: CreatePostModalProps)
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex items-start space-x-3">
             <img
-              src={user.avatar || '/default-avatar.png'}
+              src={user.avatar || '/default-avatar.svg'}
               alt={user.username}
               className="w-10 h-10 rounded-full"
             />

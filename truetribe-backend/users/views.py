@@ -24,11 +24,16 @@ class UserSearchView(generics.ListAPIView):
         return User.objects.none()
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_object(self):
         return self.request.user
+    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return UserSerializer
+        return UserProfileSerializer
 
 class UserDetailView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
